@@ -19,14 +19,11 @@ class User(models.Model):
 
 
 class Customer(User):
-    # customer_id = models.AutoField()
-
     def __str__(self):
         return f"{self.first_name} -{self.last_name}"
 
 
 class Staff(User):
-    # staff_id = models.AutoField()
     role = models.CharField(max_length=100)
 
     def __str__(self):
@@ -34,7 +31,6 @@ class Staff(User):
 
 
 class Manager(User):
-    # manager_id = models.AutoField()
     staff = models.ForeignKey(
         Staff, on_delete=models.CASCADE, related_name="managers"
         )
@@ -42,6 +38,4 @@ class Manager(User):
     def __str__(self):
         return f"{self.first_name} - {self.last_name}"
     
-# class CustomerOrder(models.Model):
-#     customer=models.ForeignKey(Customer,on_delete=models.CASCADE,related_name='customer_orders')
-#     item=models.
+
