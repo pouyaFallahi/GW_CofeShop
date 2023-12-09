@@ -19,11 +19,13 @@ class User(models.Model):
 
 
 class Customer(User):
+    customer_id = models.AutoField(primary_key=True, default=1, null=False)
     def __str__(self):
         return f"{self.first_name} -{self.last_name}"
 
 
 class Staff(User):
+    staff_id = models.AutoField(primary_key=True, default=1, null=False)
     role = models.CharField(max_length=100)
 
     def __str__(self):
@@ -31,7 +33,8 @@ class Staff(User):
 
 
 class Manager(User):
-    staff = models.ForeignKey(
+    manager_id = models.AutoField(primary_key=True, default=1, null=False)
+    staff_id = models.ForeignKey(
         Staff, on_delete=models.CASCADE, related_name="managers"
         )
 
