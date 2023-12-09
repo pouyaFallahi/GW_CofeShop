@@ -37,5 +37,39 @@ class Manager(User):
 
     def __str__(self):
         return f"{self.first_name} - {self.last_name}"
-    
 
+
+class Category(models.Model):
+    category_names = [('COLD_DRINKS', 'cold_drinks'), ('HOT_DRINKS', 'hot_drinks'), ('FOOD', 'food')]
+    category_id = models.IntegerField(serialize=True, primary_key=True)
+    name = models.CharField(choices=category_names, max_length=15, null=False, default='HOT_DRINKS')
+class Item(models.Model):
+    item_id = models.IntegerField(serialize=True, primary_key=True)
+    category_id = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='item')
+    name = models.CharField(max_length=150, null=False, unique=True)
+    price = models.FloatField(null=False)
+
+    def __str__(self):
+        return f"{self.name}"
+
+class CustomerOrder(models.Model):
+    order_id = models.AutoField(primary_key=True, default=1, null=False)
+    customer_id = models.CharField(max_length=150, null=False)
+    item_id = models.CharField(max_length=150, null=False)
+    quantity = models.IntegerField(default=1)
+    total_amount = models.FloatField(null=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    staff_id = models.ForeignKey(Staff, on_delete=models.CASCADE, related_name='customer_order')
+
+
+class ItemCustomerOrder(models.Model):
+    item_customer_order_id = models.IntegerField(serialize=True, primary_key=True)
+    item_id = models.ForeignKey(Item ,on_delete=models.CASCADE, related_name='item_order')
+    order_id = models.ForeignKey(CustomerOrder, on_delete=models.CASCADE)
+
+
+class Sell_Record(models.Model):
+    order_id = models.ForeignKey(CustomerOrder, on_delete=models.CASCADE, related_name='sell_record')
+    date = models.DateTimeField(auto_now=True)
+    staff_id = models.ForeignKey(Staff, on_delete=models.CASCADE, related_name='sell_record')
+    manager_id = models.ForeignKey(Manager, on_delete=models.CASCADE, related_name='sell_record')
