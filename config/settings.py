@@ -44,11 +44,16 @@ DJANGO_DEFAULT_APPS = [
 ]
 
 MY_APPS = [
-    'Coffe'
+    'coffe',
+    'users',
+
 ]
 
 INSTALLED_APPS = MY_APPS + DJANGO_DEFAULT_APPS + THIRD_PARTY_APPS
 
+AUTHENTICATION_BACKENDS = [
+    'users.authentication.PhoneNumberBackend'
+]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -87,9 +92,9 @@ WSGI_APPLICATION = 'config.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'shopdatabase',
-        'USER': 'artin',
-        'PASSWORD': '123',
+        'NAME': 'cafe',
+        'USER': 'postgres',
+        'PASSWORD': 'postgres',
         'HOST': 'localhost',
         'PORT': '5432',
     }
