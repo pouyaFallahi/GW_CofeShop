@@ -43,22 +43,74 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
     gender = models.CharField(max_length=6, choices=GENDER_CHOICES)
     address = models.TextField()
     create_at = models.DateTimeField(auto_now_add=True)
-    username = models.CharField(
-        blank=False, null=False, unique=True, max_length=100)
+    username = models.CharField(blank=False, null=False, unique=True, max_length=100)
     password = models.CharField(blank=False, null=False, max_length=50)
     phone = models.CharField(unique=True, max_length=15)
     email = models.EmailField(unique=True, null=True, blank=True, validators=[validate_email])
 
-    objects = CustomUserManager()
+    is_customer = models.BooleanField(default=False)
+    is_staff = models.BooleanField(default=False)
+    is_manager = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'phone'
+    REQUIRED_FIELDS = ['username']
+
+    objects = CustomUserManager()
 
     @property
     def full_name(self):
         return f"{self.first_name} {self.last_name}"
 
-
     class Meta:
-        abstract = True
+        # abstract = True
         verbose_name = 'User'
         verbose_name_plural = 'Users'
+
+
+class CustomerManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(is_customer=True)
+
+
+# Customer.customers.filter(name__icontain='')
+class Customer(CustomUser):
+    customers = CustomerManager()
+
+    class Meta:
+        proxy = True
+
+    def save(self, *args, **kwargs):
+        self.is_customer = True
+        super().save(*args, **kwargs)
+
+
+class StaffManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(is__staff=True)
+
+
+class Staff(CustomUser):
+    staffs = StaffManager()
+
+    class Meta:
+        proxy = True
+
+    def save(self, *args, **kwargs):
+        self.is_staff = True
+        super().save(*args, **kwargs)
+
+
+class ManagerManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(is_manager=True)
+
+
+class Manager(CustomUser):
+    managers = ManagerManager()
+
+    class Meta:
+        proxy = True
+
+    def save(self, *args, **kwargs):
+        self.is_manager = True
+        super().save(*args, **kwargs)
