@@ -54,7 +54,7 @@ class CustomerOrder(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f'{self.customer}'
+           return f'{self.user.first_name}-{self.user.last_name}'
 
 
 class SellRecord(models.Model):
