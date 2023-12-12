@@ -29,30 +29,41 @@ class User(models.Model):
 
 
 class Category(models.Model):
-    category_names = [('COLD_DRINKS', 'cold_drinks'), ('HOT_DRINKS', 'hot_drinks'), ('FOOD', 'food')]
-    name = models.CharField(choices=category_names, max_length=15, null=False, default='HOT_DRINKS')
+    name = models.CharField(max_length=100)
+    def __str__(self):
+        return f'{self.name}'
 
 
 class Item(models.Model):
-    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='item')
-    name = models.CharField(max_length=150, null=False, unique=True)
-    price = models.FloatField(null=False)
+    category= models.ForeignKey(
+        Category, on_delete=models.CASCADE, related_name="items")
+    name = models.CharField(max_length=100)
+    price = models.FloatField()
 
     def __str__(self):
-        return f"{self.name}"
+        return f'{self.name}'
 
 
 class CustomerOrder(models.Model):
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='customer_order')
-    staff = models.ForeignKey(Staff, on_delete=models.CASCADE, related_name='customer_order')
-    item = models.ManyToManyField(Item, related_name="customer_orders")
-    item_quantity = models.IntegerField(default=0)
-    total_amount = models.FloatField(null=False)
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='customer_orders')
+    item = models.ManyToManyField(
+        Item, related_name="customer_orders")
+    item_quantity = models.IntegerField()
+    total_amount = models.FloatField()
     created_at = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return f'{self.customer}'
 
-class Sell_Record(models.Model):
-    order = models.ForeignKey(CustomerOrder, on_delete=models.CASCADE, related_name='sell_record')
-    date = models.DateTimeField(auto_now=True)
-    staff = models.ForeignKey(Staff, on_delete=models.CASCADE, related_name='sell_record')
-    manager = models.ForeignKey(Manager, on_delete=models.CASCADE, related_name='sell_record')
+
+class SellRecord(models.Model):
+    order= models.ForeignKey(
+        CustomerOrder, on_delete=models.CASCADE, related_name="sell_records")
+    user= models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="sell_records")
+    date = models.DateField()
+
+    def __str__(self):
+        return f'{self.date}'
+
