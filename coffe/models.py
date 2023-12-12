@@ -8,60 +8,24 @@ class User(models.Model):
         "F": "Famle",
         "M": "Male",
         "o": "other"}
+    roles={"B":"Barista","C":"Cashier","A":"Accountant","S":" Server"}
+    role = models.CharField(max_length=1,choices=roles)
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
     email = models.EmailField()
     phone = models.CharField(max_length=12)
-    gender = models.CharField(max_length=1, choices=differentـgender)
+    gender = models.CharField(max_length=1,choices=differentـgender)
     address = models.TextField()
     create_at = models.DateTimeField(auto_now_add=True)
     username = models.CharField(
         blank=False, null=False, unique=True, max_length=100)
     password = models.CharField(blank=False, null=False, max_length=50)
-
-    @property
-    def full_name(self):
+    is_manager=models.BooleanField(default=False)
+    is_staff=models.BooleanField(default=False)
+    is_customer=models.BooleanField(default=True)
+    
+    def __str__(self):
         return f'{self.first_name}-{self.last_name}'
-
-    class Meta:
-        abstract = True
-
-
-class Customer(User):
-    def __str__(self):
-        return f"{self.full_name}"
-
-
-class Staff(User):
-    roles = {"B": "Barista",
-             "C": "Cashier",
-             "A": "Accountant",
-             "S": " Server"}
-    role = models.CharField(max_length=1, choices=roles)
-
-    def __str__(self):
-        return f"{self.full_name}"
-
-
-class Manager(User):
-    staff = models.ForeignKey(
-        Staff, on_delete=models.CASCADE, related_name="managers"
-    )
-
-    def __str__(self):
-        return f"{self.full_name}"
-
-
-class Customer(CustomUser):
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
-
-
-class Staff(CustomUser):
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
-
-
-class Manager(CustomUser):
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
 
 
 class Category(models.Model):
