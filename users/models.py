@@ -43,7 +43,7 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
     gender = models.CharField(max_length=6, choices=GENDER_CHOICES)
     address = models.TextField()
     create_at = models.DateTimeField(auto_now_add=True)
-    username = models.CharField(blank=False, null=False, unique=True, max_length=100)
+    username = models.CharField(blank=True, null=True, unique=True, max_length=100)
     password = models.CharField(blank=False, null=False, max_length=50)
     phone = models.CharField(unique=True, max_length=15)
     email = models.EmailField(unique=True, null=True, blank=True, validators=[validate_email])
@@ -53,7 +53,7 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
     is_manager = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'phone'
-    REQUIRED_FIELDS = ['username']
+    # REQUIRED_FIELDS = ['username']
 
     objects = CustomUserManager()
 
@@ -62,7 +62,6 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
         return f"{self.first_name} {self.last_name}"
 
     class Meta:
-        # abstract = True
         verbose_name = 'User'
         verbose_name_plural = 'Users'
 
