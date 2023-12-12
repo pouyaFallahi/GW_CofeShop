@@ -54,7 +54,7 @@ INSTALLED_APPS = MY_APPS + DJANGO_DEFAULT_APPS + THIRD_PARTY_APPS
 AUTHENTICATION_BACKENDS = [
     'users.authentication.PhoneNumberBackend'
 ]
-
+AUTH_USER_MODEL = 'users.CustomUser'
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
