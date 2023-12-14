@@ -1,20 +1,16 @@
 from django.contrib.auth.forms import UserCreationForm
-from .models import Customer, Manager, Staff
+from django.forms import ModelForm
+
+from .models import MyUser
 
 
 class CustomerCreationForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):
-        model = Customer
+        model = MyUser
         fields = ['phone', ]
 
 
-class StaffCreationForm(UserCreationForm):
-    class Meta(UserCreationForm.Meta):
-        model = Staff
-        fields = ['phone', ]
-
-
-class ManagerCreationForm(UserCreationForm):
-    class Meta(UserCreationForm.Meta):
-        model = Manager
-        fields = ['phone', ]
+class CustomerCreationModelForm(ModelForm):
+    class Meta:
+        model = MyUser
+        fields = ['first_name', 'last_name', 'email', 'phone', 'gender', 'address', 'username', 'password' ]

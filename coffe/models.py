@@ -1,53 +1,67 @@
+from django.contrib.auth.models import AbstractUser, BaseUserManager, UserManager
 from django.db import models
-from django.contrib.auth.models import AbstractUser, BaseUserManager
-from django.core.exceptions import ValidationError
-import re
-
-# class CustomUserManager(BaseUserManager):
-#     def create_user(self, phone=None, email=None, password=None):
-#         if not phone and email:
-#             raise ValueError("The Phone Number or email is required")
-#
-#         email = self.normalize_email(email)
-#         user = self.model(phone=phone, email=email)
-#         user.set_password(password)
-#         user.save(using=self._db)
-#         return user
-#
-#     def create_superuser(self, phone, email=None, password=None):
-#         user = self.create_user(phone, email=None, password=password)
-#         user.is_staff = True
-#         user.is_superuser = True
-#         user.is_active = True
-#         user.save(using=self._db)
-#         return user
-#
-#
-# def validate_phone_number(value):
-#     pattern = r'^\+?\d{8,16}$'
-#     if not re.match(pattern, value):
-#         raise ValidationError('Invalid Phone Number')
+from django.contrib.auth.hashers import make_password
+from django.apps import apps
 
 
+# Create your models here.
+
+class CustomUserManger(BaseUserManager):
+    def _create_user(self, username, phone=None, email=None, password=None, **extra_fields):
+        """
+        Create and save a user with the given username, email, and password.
+        """
+        if not username:
+            raise ValueError("The given username must be set")
+        email = self.normalize_email(email)
+        # Lookup the real model class from the global app registry so this
+        # manager method can be used in migrations. This is fine because
+        # managers are by definition working on the real model.
+        GlobalUserModel = apps.get_model(
+            self.model._meta.app_label, self.model._meta.object_name
+        )
+        username = GlobalUserModel.normalize_username(username)
+        user = self.model(username=username, phone=phone, email=email, **extra_fields)
+        user.password = make_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_user(self, username, phone=None, email=None, password=None, **extra_fields):
+        extra_fields.setdefault("is_staff", False)
+        extra_fields.setdefault("is_superuser", False)
+        return self._create_user(username, phone, email, password, **extra_fields)
+
+    def create_superuser(self, username, phone=None, email=None, password=None, **extra_fields):
+        extra_fields.setdefault("is_staff", True)
+        extra_fields.setdefault("is_superuser", True)
+
+        if extra_fields.get("is_staff") is not True:
+            raise ValueError("Superuser must have is_staff=True.")
+        if extra_fields.get("is_superuser") is not True:
+            raise ValueError("Superuser must have is_superuser=True.")
+
+        return self._create_user(username, phone, email, password, **extra_fields)
 
 
-class User(AbstractUser):
-    differentـgender = {
-        "F": "Female",
-        "M": "Male",
-        "o": "other"}
-    roles = {"B":"Barista","C":"Cashier","A":"Accountant","S":" Server"}
-    role = models.CharField(max_length=1,choices=roles)
-    phone = models.CharField(max_length=12)
-    gender = models.CharField(max_length=1,choices=differentـgender)
+class MyUser(AbstractUser):
+    differentـgender = [
+        ("F", "Female"),
+        ("M", "Male"),
+        ("o", "other"),
+    ]
+    roles = [("A", "Accountant"), ("B", "Barista"), ("C", "Cashier"), ("S", " Server")]
+    role = models.CharField(max_length=1, choices=roles)
+    phone = models.CharField(max_length=12, null=True)
+    gender = models.CharField(max_length=1, choices=differentـgender)
     address = models.TextField()
-    image = models.ImageField(upload_to="images/user/")
     password = models.CharField(blank=False, null=False, max_length=50)
     is_manager = models.BooleanField(default=False)
     is_customer = models.BooleanField(default=True)
-    
+    is_staff = models.BooleanField(default=False)
+
+
     def __str__(self):
-        return f'{self.first_name}-{self.last_name}'
+        return f'{self.username}'
 
 
 class Category(models.Model):
@@ -58,12 +72,10 @@ class Category(models.Model):
 
 
 class Item(models.Model):
-    category= models.ForeignKey(
+    category = models.ForeignKey(
         Category, on_delete=models.CASCADE, related_name="items")
     name = models.CharField(max_length=100)
     price = models.FloatField()
-    image=models.ImageField(upload_to="images/item/")
-
 
     def __str__(self):
         return f'{self.name}'
@@ -71,7 +83,7 @@ class Item(models.Model):
 
 class CustomerOrder(models.Model):
     user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='customer_orders')
+        MyUser, on_delete=models.CASCADE, related_name='customer_orders')
     item = models.ManyToManyField(
         Item, related_name="customer_orders")
     item_quantity = models.IntegerField()
@@ -79,21 +91,23 @@ class CustomerOrder(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f'{self.user.first_name}-{self.user.last_name}'
+        return f'{self.user}'
 
 
 class SellRecord(models.Model):
-    order= models.ForeignKey(
+    order = models.ForeignKey(
         CustomerOrder, on_delete=models.CASCADE, related_name="sell_records")
-    user= models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="sell_records")
+    user = models.ForeignKey(
+        MyUser, on_delete=models.CASCADE, related_name="sell_records")
     date = models.DateField()
 
     def __str__(self):
         return f'{self.date}'
+
+
 class Comment(models.Model):
     item=models.ForeignKey(Item,on_delete=models.CASCADE,related_name="comments")
-    user=models.ForeignKey(User,on_delete=models.CASCADE,related_name="comments")
+    user=models.ForeignKey(MyUser,on_delete=models.CASCADE,related_name="comments")
     content=models.TextField()
     level_rate= (
     (5, 'عالی'),
@@ -105,4 +119,4 @@ class Comment(models.Model):
 
     rate=models.IntegerField(default=3,choices=level_rate)
     def __str__(self):
-        return f'{self.user.first_name}-{self.user.last_name}'
+        return f'{self.user}'
