@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.backends import ModelBackend, BaseBackend
 
-from ..models import User
+from GW_CofeShop.coffe.models import User
 from django.db.models import Q
 
 
