@@ -3,7 +3,7 @@ from django.views.generic import ListView, CreateView, DeleteView, DetailView, U
 from .models import Category, Comment, CustomerOrder, Item, SellRecord, MyUser
 from django.urls import reverse_lazy
 from .forms import CustomerCreationModelForm
-from django.contrib.auth import login
+from django.contrib.auth.views import LoginView
 
 
 # Create your views here.
@@ -11,7 +11,7 @@ from django.contrib.auth import login
 
 class CustomerSignupView(CreateView):
     model = MyUser
-    template_name = 'customer_create.html'
+    template_name = 'coffe/customer_create.html'
     form_class = CustomerCreationModelForm
     success_url = reverse_lazy('login')
 
@@ -20,8 +20,10 @@ class CustomerSignupView(CreateView):
     #     return super().form_valid(form)
 
 
-# class LoginView(login):
-#     pass
+class LoginView(LoginView):
+    template_name = 'coffe/login.html'
+    success_url = reverse_lazy('list_item')  # Change in the future
+
 
 class CustomerListView(ListView):
     model = MyUser

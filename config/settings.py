@@ -141,3 +141,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 #     'HOST': 'localhost',
 #     'PORT': '5432',
 # }
+
+
+LOGIN_URL = 'login'

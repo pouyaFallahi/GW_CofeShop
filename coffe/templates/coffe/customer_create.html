@@ -5,7 +5,7 @@
     <title>Title</title>
 </head>
 <body>
-<form method="post">
+<form method="post" action="{% url 'coffe:login' %}?next={{ request.GET.next }}">
     {% csrf_token %}
     {{form.as_p}}
     <button type="submit">SignUp</button>
