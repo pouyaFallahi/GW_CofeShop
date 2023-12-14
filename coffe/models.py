@@ -1,27 +1,50 @@
 from django.db import models
+from django.contrib.auth.models import AbstractUser, BaseUserManager
+from django.core.exceptions import ValidationError
+import re
 
-# Create your models here.
-class User(models.Model):
+# class CustomUserManager(BaseUserManager):
+#     def create_user(self, phone=None, email=None, password=None):
+#         if not phone and email:
+#             raise ValueError("The Phone Number or email is required")
+#
+#         email = self.normalize_email(email)
+#         user = self.model(phone=phone, email=email)
+#         user.set_password(password)
+#         user.save(using=self._db)
+#         return user
+#
+#     def create_superuser(self, phone, email=None, password=None):
+#         user = self.create_user(phone, email=None, password=password)
+#         user.is_staff = True
+#         user.is_superuser = True
+#         user.is_active = True
+#         user.save(using=self._db)
+#         return user
+#
+#
+# def validate_phone_number(value):
+#     pattern = r'^\+?\d{8,16}$'
+#     if not re.match(pattern, value):
+#         raise ValidationError('Invalid Phone Number')
+
+
+
+
+class User(AbstractUser):
     differentـgender = {
         "F": "Female",
         "M": "Male",
         "o": "other"}
-    roles={"B":"Barista","C":"Cashier","A":"Accountant","S":" Server"}
+    roles = {"B":"Barista","C":"Cashier","A":"Accountant","S":" Server"}
     role = models.CharField(max_length=1,choices=roles)
-    first_name = models.CharField(max_length=100)
-    last_name = models.CharField(max_length=100)
-    email = models.EmailField()
     phone = models.CharField(max_length=12)
     gender = models.CharField(max_length=1,choices=differentـgender)
     address = models.TextField()
-    create_at = models.DateTimeField(auto_now_add=True)
-    image=models.ImageField(upload_to="images/user/")
-    username = models.CharField(
-        blank=False, null=False, unique=True, max_length=100)
+    image = models.ImageField(upload_to="images/user/")
     password = models.CharField(blank=False, null=False, max_length=50)
-    is_manager=models.BooleanField(default=False)
-    is_staff=models.BooleanField(default=False)
-    is_customer=models.BooleanField(default=True)
+    is_manager = models.BooleanField(default=False)
+    is_customer = models.BooleanField(default=True)
     
     def __str__(self):
         return f'{self.first_name}-{self.last_name}'
