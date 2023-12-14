@@ -30,31 +30,16 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
-THIRD_PARTY_APPS = [
-
-]
-
-DJANGO_DEFAULT_APPS = [
+INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'coffe'
 ]
 
-MY_APPS = [
-    'coffe',
-    'users',
-
-]
-
-INSTALLED_APPS = MY_APPS + DJANGO_DEFAULT_APPS + THIRD_PARTY_APPS
-
-AUTHENTICATION_BACKENDS = [
-    'users.authentication.PhoneNumberBackend'
-]
-AUTH_USER_MODEL = 'users.CustomUser'
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -92,12 +77,14 @@ WSGI_APPLICATION = 'config.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'cafe',
+        'NAME': 'db_coffe_shop',
         'USER': 'postgres',
         'PASSWORD': 'postgres',
         'HOST': 'localhost',
         'PORT': '5432',
     }
+
+
 }
 
 

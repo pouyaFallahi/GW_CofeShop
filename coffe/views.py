@@ -1,46 +1,25 @@
 from django.shortcuts import render
+from django.views.generic import ListView,CreateView,DeleteView,DetailView,UpdateView
+from .models import Category,Comment,CustomerOrder,Item,SellRecord,User
 from django.urls import reverse_lazy
-from .models import Customer, Manager, Staff
-from django.views.generic import CreateView
-from .forms import CustomerCreationForm
-from django.contrib.auth.models import Group
-
-
 # Create your views here.
-class CustomerSignupView(CreateView):
-    model = Customer
-    template_name = ''
-    success_url = reverse_lazy('login')
-    form_class = CustomerCreationForm
-
-    def form_valid(self, form):
-        user = form.save()
-        customer_group = Group.objects.get(name='Customer')
-        user.groups.add(customer_group)
-        return super().form_valid(form)
-
-
-class StaffSignupView(CreateView):
-    model = Staff
-    template_name = ''
-    success_url = reverse_lazy('login')
-    form_class = StaffCreationForm
-
-    def form_valid(self, form):
-        user = form.save()
-        staff_group = Group.objects.get(name='Staff')
-        user.groups.add(staff_group)
-        return super().form_valid(form)
+class ItemListView(ListView):
+    model=Item
+    template_name="coffe/itemlist.html"
+    context_object_name="items"
+class ItemCreateView(CreateView):
+    model=Item
+    fields="__all__"
+    template_name="coffe/create_item.html"
+class ItemUpdateView(UpdateView,):
+    model=Item
+    fields="__all__"
+    success_url="coffe:list_item"
+class ItemDeleteView(DeleteView):
+    models=Item
+    success_url = reverse_lazy("list_item")
+    
 
 
-class ManagerSignupView(CreateView):
-    model = Manager
-    template_name = ''
-    success_url = reverse_lazy('login')
-    form_class = ManagerCreationForm
 
-    def form_valid(self, form):
-        user = form.save()
-        manager_group = Group.objects.get(name='Manager')
-        user.groups.add(manager_group)
-        return super().form_valid(form)
+

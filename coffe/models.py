@@ -1,11 +1,9 @@
 from django.db import models
-from users.models import CustomUser
-
 
 # Create your models here.
 class User(models.Model):
     differentـgender = {
-        "F": "Famle",
+        "F": "Female",
         "M": "Male",
         "o": "other"}
     roles={"B":"Barista","C":"Cashier","A":"Accountant","S":" Server"}
@@ -17,6 +15,7 @@ class User(models.Model):
     gender = models.CharField(max_length=1,choices=differentـgender)
     address = models.TextField()
     create_at = models.DateTimeField(auto_now_add=True)
+    image=models.ImageField(upload_to="images/user/")
     username = models.CharField(
         blank=False, null=False, unique=True, max_length=100)
     password = models.CharField(blank=False, null=False, max_length=50)
@@ -30,6 +29,7 @@ class User(models.Model):
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
+
     def __str__(self):
         return f'{self.name}'
 
@@ -39,6 +39,8 @@ class Item(models.Model):
         Category, on_delete=models.CASCADE, related_name="items")
     name = models.CharField(max_length=100)
     price = models.FloatField()
+    image=models.ImageField(upload_to="images/item/")
+
 
     def __str__(self):
         return f'{self.name}'
@@ -54,7 +56,7 @@ class CustomerOrder(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-           return f'{self.user.first_name}-{self.user.last_name}'
+        return f'{self.user.first_name}-{self.user.last_name}'
 
 
 class SellRecord(models.Model):
@@ -66,4 +68,18 @@ class SellRecord(models.Model):
 
     def __str__(self):
         return f'{self.date}'
+class Comment(models.Model):
+    item=models.ForeignKey(Item,on_delete=models.CASCADE,related_name="comments")
+    user=models.ForeignKey(User,on_delete=models.CASCADE,related_name="comments")
+    content=models.TextField()
+    level_rate= (
+    (5, 'عالی'),
+    (4, 'خیلی خوب'),
+    (3, 'خوب'),
+    (2, 'متوسط'),
+    (1, 'افتضاح...')
+    )
 
+    rate=models.IntegerField(default=3,choices=level_rate)
+    def __str__(self):
+        return f'{self.user.first_name}-{self.user.last_name}'
