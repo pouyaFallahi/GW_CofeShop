@@ -59,7 +59,6 @@ class MyUser(AbstractUser):
     is_customer = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 
-
     def __str__(self):
         return f'{self.username}'
 
@@ -70,12 +69,15 @@ class Category(models.Model):
     def __str__(self):
         return f'{self.name}'
 
-
+def get_default_image():
+    return "images/default/default.jpeg"
 class Item(models.Model):
     category = models.ForeignKey(
         Category, on_delete=models.CASCADE, related_name="items")
     name = models.CharField(max_length=100)
     price = models.FloatField()
+
+    image = models.ImageField(verbose_name='ItemImage', upload_to='images/user_uploads', null=True, blank=True, default=get_default_image)
 
     def __str__(self):
         return f'{self.name}'
@@ -106,17 +108,18 @@ class SellRecord(models.Model):
 
 
 class Comment(models.Model):
-    item=models.ForeignKey(Item,on_delete=models.CASCADE,related_name="comments")
-    user=models.ForeignKey(MyUser,on_delete=models.CASCADE,related_name="comments")
-    content=models.TextField()
-    level_rate= (
-    (5, 'عالی'),
-    (4, 'خیلی خوب'),
-    (3, 'خوب'),
-    (2, 'متوسط'),
-    (1, 'افتضاح...')
+    item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name="comments")
+    user = models.ForeignKey(MyUser, on_delete=models.CASCADE, related_name="comments")
+    content = models.TextField()
+    level_rate = (
+        (5, 'عالی'),
+        (4, 'خیلی خوب'),
+        (3, 'خوب'),
+        (2, 'متوسط'),
+        (1, 'افتضاح...')
     )
 
-    rate=models.IntegerField(default=3,choices=level_rate)
+    rate = models.IntegerField(default=3, choices=level_rate)
+
     def __str__(self):
         return f'{self.user}'
