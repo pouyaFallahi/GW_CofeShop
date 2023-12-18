@@ -13,18 +13,22 @@ class CustomerSignupView(CreateView):
     model = MyUser
     template_name = 'coffe/customer_create.html'
     form_class = CustomerCreationModelForm
-    success_url = reverse_lazy('login')
+    success_url = reverse_lazy('coffe:login')
 
     # def form_valid(self, form):
     #     form.instance.is_customer = self.request.user
     #     return super().form_valid(form)
 
 
-class LoginView(LoginView):
+class MyLoginView(LoginView):
     template_name = 'coffe/login.html'
-    success_url = reverse_lazy('list_item')  # Change in the future
+    success_url = reverse_lazy('coffe:list_item')  # Change in the future
 
-
+    def get_success_url(self):
+        # چک کردن مسیر موفقیت‌آمیز و تغییر آن به مسیر مورد نظر
+        if self.success_url == 'list_item':
+            return reverse_lazy(self.success_url)
+        return self.success_url
 class CustomerListView(ListView):
     model = MyUser
     fields = '__all__'
