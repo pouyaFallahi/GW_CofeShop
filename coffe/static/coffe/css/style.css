@@ -1,0 +1,30 @@
+@font-face {
+    font-family: iranyekan;
+    src: url("./iranyekanwebregular.e31c09af.woff2");
+    font-weight: 400;
+}
+
+head{
+    font-family: iranyekan;
+}
+
+body{
+    font-family: iranyekan;
+}
+
+* {
+    font-family: iranyekan;
+    font-weight: 400;
+}
+
+#intro {
+    background-image: url("https://mdbootstrap.com/img/new/fluid/city/018.jpg");
+    height: 100vh;
+}
+
+/* Height for devices larger than 576px */
+@media (min-width: 992px) {
+    #intro {
+      margin-top: -58.59px;
+}
+}
