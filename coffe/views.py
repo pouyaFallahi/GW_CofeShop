@@ -4,7 +4,11 @@ from .models import Category, Comment, CustomerOrder, Item, SellRecord, MyUser
 from django.urls import reverse_lazy
 from .forms import CustomerCreationModelForm
 from django.contrib.auth.views import LoginView
-
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
+from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.forms import AuthenticationForm
 
 # Create your views here.
 
@@ -29,6 +33,28 @@ class MyLoginView(LoginView):
         if self.success_url == 'list_item':
             return reverse_lazy(self.success_url)
         return self.success_url
+    
+    
+    def get(self, request, *args, **kwargs):
+        form = AuthenticationForm()
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request, *args, **kwargs):
+        form = AuthenticationForm(data=request.POST)
+        if form.is_valid():
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                login(request, user)
+                return redirect('coffe:list_item')
+            else:
+                form.add_error(None, 'نام کاربری یا رمز عبور اشتباه است.')
+        return render(request, self.template_name, {'form': form})
+
+
+
+
 class CustomerListView(ListView):
     model = MyUser
     fields = '__all__'

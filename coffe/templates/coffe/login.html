@@ -7,9 +7,8 @@
     <body>
         <form method="post" action="{% url 'coffe:login' %}">
             {% csrf_token %}
-            {{ form.username.label_tag }} {{ form.username }}
-            {{ form.password.label_tag }} {{ form.password }}
-
+            {{ form.as_p }}
+            {{ form.error_message }}
             <button type="submit">Login</button>
         </form>
     </body>
