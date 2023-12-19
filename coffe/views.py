@@ -130,24 +130,14 @@ class RemoveFromCartView(View):
         response.set_cookie('shopping_cart', json.dumps(cart))
         messages.success(request, f'{item.name} removed from shopping cart!')
         return response
-    # def post(self, request):
-    #     item_id = request.POST.get('item_id')
-    #     item = get_object_or_404(Item, pk=item_id)
-    #     cart = request.COOKIES.get('shopping_cart')
-    #     cart = json.loads(cart) if cart else {}
-    #     cart_item = cart.get(str(item.id))
-    #     if cart_item and cart_item['quantity'] > 0:
-    #         cart_item['quantity'] -= 1
-    #     response = JsonResponse({'message': f'Quantity of {item.name} decreased in the shopping card.'})
-    #     response.set_cookie('shopping_cart', json.dumps(cart))
-    #     response = redirect('/coffe/item/list/')
-    #     messages.success(request, f'{item.name} removed from shopping cart!')
-    #     return response
+
+
 class ViewShoppingCart(View):
 
     def get(self, request, *args, **kwargs):
         cart = request.COOKIES.get('shopping_cart', '{}')
         cart = json.loads(cart)
+
 
 def show_home(request):
     return render(request, 'coffe/homepage.html')
