@@ -24,3 +24,4 @@ class CustomerCreationModelForm(ModelForm):
 class LoginUser(View):
     template_name = 'login.html'
     error_message = forms.CharField(widget=forms.HiddenInput(), required=False)
+
