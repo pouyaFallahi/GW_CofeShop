@@ -1,4 +1,7 @@
-from django.shortcuts import render
+import json
+from django.contrib import messages
+from django.shortcuts import render, get_object_or_404
+from django.views import View
 from django.views.generic import ListView, CreateView, DeleteView, DetailView, UpdateView
 from .models import Category, Comment, CustomerOrder, Item, SellRecord, MyUser
 from django.urls import reverse_lazy
@@ -9,6 +12,7 @@ from django.utils.decorators import method_decorator
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import AuthenticationForm
+
 
 # Create your views here.
 
@@ -33,8 +37,7 @@ class MyLoginView(LoginView):
         if self.success_url == 'list_item':
             return reverse_lazy(self.success_url)
         return self.success_url
-    
-    
+
     def get(self, request, *args, **kwargs):
         form = AuthenticationForm()
         return render(request, self.template_name, {'form': form})
@@ -51,8 +54,6 @@ class MyLoginView(LoginView):
             else:
                 form.add_error(None, 'نام کاربری یا رمز عبور اشتباه است.')
         return render(request, self.template_name, {'form': form})
-
-
 
 
 class CustomerListView(ListView):
@@ -89,3 +90,23 @@ class ItemUpdateView(UpdateView, ):
 class ItemDeleteView(DeleteView):
     models = Item
     success_url = reverse_lazy("list_item")
+
+
+class AddToCartView(View):
+
+    def post(self, request):
+        item_id = request.POST.get('item_id')
+        item = get_object_or_404(Item, pk=item_id)
+        # Get the current cart from cookies or create a new empty cart
+        cart = request.COOKIES.get('shopping_cart')
+        cart = json.loads(cart) if cart else {}
+        cart_item = cart.get(str(item.id), {'quantity': 0})
+        cart_item['item_id'] = item.id
+        cart_item['name'] = item.name
+        cart_item['price'] = item.price
+        cart_item['quantity'] += 1
+        cart[str(item.id)] = cart_item
+        response = redirect('/coffe/item/list/')
+        response.set_cookie('shopping_cart', json.dumps(cart))
+        messages.success(request, f'{item.name} added to the shopping cart!')
+        return response
