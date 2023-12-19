@@ -6,7 +6,7 @@ from django.apps import apps
 
 # Create your models here.
 
-class CustomUserManger(BaseUserManager):
+class CustomUserManager(BaseUserManager):
     def _create_user(self, username, phone=None, email=None, password=None, **extra_fields):
         """
         Create and save a user with the given username, email, and password.
@@ -58,6 +58,8 @@ class MyUser(AbstractUser):
     is_manager = models.BooleanField(default=False)
     is_customer = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
+
+    objects = CustomUserManager()
 
     def __str__(self):
         return f'{self.username}'
