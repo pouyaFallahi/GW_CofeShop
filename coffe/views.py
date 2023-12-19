@@ -123,7 +123,8 @@ class RemoveFromCartView(View):
         cart_item['item_id'] = item.id
         cart_item['name'] = item.name
         cart_item['price'] = item.price
-        cart_item['quantity'] -= 1
+        if cart_item and cart_item['quantity'] > 0:
+            cart_item['quantity'] -= 1
         cart[str(item.id)] = cart_item
         response = redirect('/coffe/item/list/')
         response.set_cookie('shopping_cart', json.dumps(cart))
