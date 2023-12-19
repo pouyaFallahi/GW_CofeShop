@@ -110,3 +110,13 @@ class AddToCartView(View):
         response.set_cookie('shopping_cart', json.dumps(cart))
         messages.success(request, f'{item.name} added to the shopping cart!')
         return response
+
+
+class ViewShoppingCart(View):
+
+    def get(self, request, *args, **kwargs):
+        cart = request.COOKIES.get('shopping_cart', '{}')
+        cart = json.loads(cart)
+
+def show_home(request):
+    return render(request, 'coffe/homepage.html')
