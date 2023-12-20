@@ -6,7 +6,7 @@ from django.views.generic import ListView, CreateView, DeleteView, DetailView, U
 from .models import Category, Comment, CustomerOrder, Item, SellRecord, MyUser
 from django.urls import reverse_lazy
 from .forms import CustomerCreationModelForm
-from django.contrib.auth.views import LoginView
+from django.contrib.auth.views import LoginView,LogoutView
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.shortcuts import render, redirect
@@ -54,7 +54,13 @@ class MyLoginView(LoginView):
             else:
                 form.add_error(None, 'نام کاربری یا رمز عبور اشتباه است.')
         return render(request, self.template_name, {'form': form})
-
+class MyLogoutView(LogoutView):
+    def get_next_page(self):
+        return 'coffe/user/login/'  
+    def dispatch(self, request, *args, **kwargs):
+        response = super().dispatch(request, *args, **kwargs)
+        request.session.clear()
+        return response
 
 class CustomerListView(ListView):
     model = MyUser
@@ -143,3 +149,10 @@ class show_home(ListView):
     model = Item
     template_name = "coffe/homepage.html"
     context_object_name = "items"
+    
+class OrderListView(View):
+    template_name='order_list.html'
+    def get(self,request,*args, **kwargs):
+        if request.user.is_staff:
+            order=CustomerOrder.objects.all()
+            return render(request,self.template_name,{"orders":order})
