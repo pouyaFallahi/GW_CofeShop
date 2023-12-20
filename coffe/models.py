@@ -2,6 +2,7 @@ from django.contrib.auth.models import AbstractUser, BaseUserManager, UserManage
 from django.db import models
 from django.contrib.auth.hashers import make_password
 from django.apps import apps
+from django.utils.html import mark_safe
 
 
 # Create your models here.
@@ -83,6 +84,12 @@ class Item(models.Model):
 
     def __str__(self):
         return f'{self.name}'
+    def image_preview(self):
+         return mark_safe('<img src="/../../media/%s" width="150" height="150" />' % (self.image))
+    @property
+    def thumbnail_preview(self):
+        if self.image:
+            return mark_safe('<img src= "{}" width="200" height="200" />' .format(self.image.url))
 
 
 class CustomerOrder(models.Model):
