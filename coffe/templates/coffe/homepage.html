@@ -3,7 +3,7 @@
 {% load static %}
 
 {% block extraCSS%}
-  <link rel="stylesheet" href="{% static 'tasks/css/style.css' %}" type="text/css"> 
+  <link rel="stylesheet" href="{% static 'tasks/css/style.css' %}" type="text/css">
 {% endblock %}
 
 {% block content %}
@@ -20,3 +20,8 @@
       </div>
     </div>
 {% endblock %}
+
+{% block main %}
+{% include "coffe/item_list.html" %}
+{% endblock %}
+
