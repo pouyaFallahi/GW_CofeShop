@@ -6,7 +6,7 @@ from django.views.generic import ListView, CreateView, DeleteView, DetailView, U
 from .models import Category, Comment, CustomerOrder, Item, SellRecord, MyUser
 from django.urls import reverse_lazy
 from .forms import CustomerCreationModelForm
-from django.contrib.auth.views import LoginView,LogoutView
+from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.shortcuts import render, redirect
@@ -30,11 +30,11 @@ class CustomerSignupView(CreateView):
 
 class MyLoginView(LoginView):
     template_name = 'coffe/login.html'
-    success_url = reverse_lazy('coffe:list_item')  # Change in the future
+    success_url = reverse_lazy('coffe:home')  # Change in the future
 
     def get_success_url(self):
         # چک کردن مسیر موفقیت‌آمیز و تغییر آن به مسیر مورد نظر
-        if self.success_url == 'list_item':
+        if self.success_url == 'home':
             return reverse_lazy(self.success_url)
         return self.success_url
 
@@ -50,17 +50,21 @@ class MyLoginView(LoginView):
             user = authenticate(request, username=username, password=password)
             if user is not None:
                 login(request, user)
-                return redirect('coffe:list_item')
+                return redirect('coffe:home')
             else:
                 form.add_error(None, 'نام کاربری یا رمز عبور اشتباه است.')
         return render(request, self.template_name, {'form': form})
+
+
 class MyLogoutView(LogoutView):
     def get_next_page(self):
-        return 'coffe/user/login/'  
+        return 'coffe/homepage'
+
     def dispatch(self, request, *args, **kwargs):
         response = super().dispatch(request, *args, **kwargs)
         request.session.clear()
         return response
+
 
 class CustomerListView(ListView):
     model = MyUser
@@ -90,12 +94,12 @@ class ItemCreateView(CreateView):
 class ItemUpdateView(UpdateView, ):
     model = Item
     fields = "__all__"
-    success_url = "coffe:list_item"
+    success_url = "coffe:home"
 
 
 class ItemDeleteView(DeleteView):
     models = Item
-    success_url = reverse_lazy("list_item")
+    success_url = reverse_lazy("coffe:home")
 
 
 class AddToCartView(View):
@@ -112,7 +116,7 @@ class AddToCartView(View):
         cart_item['price'] = item.price
         cart_item['quantity'] += 1
         cart[str(item.id)] = cart_item
-        response = redirect('/coffe/item/list/')
+        response = redirect('/coffe/')
         response.set_cookie('shopping_cart', json.dumps(cart))
         messages.success(request, f'{item.name} added to the shopping cart!')
         return response
@@ -132,7 +136,7 @@ class RemoveFromCartView(View):
         if cart_item and cart_item['quantity'] > 0:
             cart_item['quantity'] -= 1
         cart[str(item.id)] = cart_item
-        response = redirect('/coffe/item/list/')
+        response = redirect('/coffe/')
         response.set_cookie('shopping_cart', json.dumps(cart))
         messages.success(request, f'{item.name} removed from shopping cart!')
         return response
@@ -141,18 +145,33 @@ class RemoveFromCartView(View):
 class ViewShoppingCart(View):
 
     def get(self, request, *args, **kwargs):
+        new_dic = {}
         cart = request.COOKIES.get('shopping_cart', '{}')
         cart = json.loads(cart)
+        for value in cart.values():
+            new_dic['name'] = value['name']
+            new_dic['price'] = value['price']
+            new_dic['quantity'] = value['quantity']
+        print(new_dic)
+
+        return render(request, 'coffe/order_list.html', context=new_dic)
+
+
+
+
 
 
 class show_home(ListView):
     model = Item
     template_name = "coffe/homepage.html"
     context_object_name = "items"
-    
+
+
 class OrderListView(View):
-    template_name='order_list.html'
-    def get(self,request,*args, **kwargs):
-        if request.user.is_staff:
-            order=CustomerOrder.objects.all()
-            return render(request,self.template_name,{"orders":order})
+    template_name = 'coffe/order_list.html'
+
+    def get(self, request, *args, **kwargs):
+        order = CustomerOrder.objects.all()
+        return render(request, self.template_name, {"orders": order})
+
+

@@ -46,9 +46,9 @@ class CustomUserManager(BaseUserManager):
 
 class MyUser(AbstractUser):
     differentـgender = [
-        ("F", "Female"),
-        ("M", "Male"),
-        ("o", "other"),
+        ("F", "زن"),
+        ("M", "مرد"),
+        ("o", "متفرقه"),
     ]
     roles = [("A", "Accountant"), ("B", "Barista"), ("C", "Cashier"), ("S", " Server")]
     role = models.CharField(max_length=1, choices=roles)

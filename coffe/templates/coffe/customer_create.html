@@ -1,9 +1,19 @@
 {% extends 'base.html' %}
 
-<form method="post" action="{% url 'coffe:login' %}?next={{ request.GET.next }}">
-    {% csrf_token %}
-    {{form.as_p}}
-    <button type="submit">SignUp</button>
-</form>
-</body>
-</html>
+{% block main %}
+    <div>
+    <form method="post" action="{% url 'coffe:login' %}?next={{ request.GET.next }}">
+        {% csrf_token %}
+        <p>نام: {{ form.first_name }}</p>
+        <p> نام خانوادگی: {{ form.last_name }}</p>
+        <p> جنسیت: {{ form.gender}} </p>
+        <p> نشانی پست الکترونیکی: {{ form.email}}</p>
+        <p> شماره تلفن همراه: {{ form.phone }}</p>
+        <p> نام کاربری: {{ form.username }}</p>
+        <p> رمز وزود: {{ form.password }}</p>
+        <p> آدرس: {{ form.address }}</p>
+
+       <a href="{% url 'coffe:signup_user' %}"><button type="submit" class="btn btn-success">ثبت</button></a>
+    </form>
+    </div>
+{% endblock  %}
