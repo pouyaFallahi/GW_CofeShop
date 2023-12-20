@@ -139,5 +139,7 @@ class ViewShoppingCart(View):
         cart = json.loads(cart)
 
 
-def show_home(request):
-    return render(request, 'coffe/homepage.html')
+class show_home(ListView):
+    model = Item
+    template_name = "coffe/homepage.html"
+    context_object_name = "items"
