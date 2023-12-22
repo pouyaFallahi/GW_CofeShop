@@ -1,8 +1,8 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en" dir="rtl">
-{#{% load static %}#}
-{#<link rel="stylesheet" href="{% static 'coffe/css/style.css' %}" type="text/css">#}
+{% load static %}
+<link rel="stylesheet" href="{% static 'coffe/css/style.css' %}" type="text/css">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -16,6 +16,8 @@
         }
 
         .navbar {
+            background-color: #402218 !important;
+            color: #EED6C4 !important;
             position: fixed;
             top: 0;
             width: 100%;
@@ -26,6 +28,8 @@
         }
 
         .footer {
+            background-color: #402218 !important;
+            color: #EED6C4 !important;
             position: fixed;
             bottom: 0;
             width: 100%;
@@ -47,10 +51,12 @@
 <!-- Navbar -->
 
 
-<div class="container mt-3">
+<div class="container m-0 p-0">
     {% block content %}
     {% endblock %}
 </div>
+
+
 {% block main %}
 
 {% endblock %}

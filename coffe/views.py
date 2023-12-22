@@ -78,6 +78,26 @@ class CustomerListView(ListView):
         # filter by a variable captured from url, for example
         return qs.filter(is_customer=True)
 
+class CategoryListView(ListView):
+    model = Category
+    template_name = "coffe/category_list.html"
+    context_object_name = "categories"
+
+class CategoryCreateView(CreateView):
+    model = Category
+    fields = "__all__"
+    template_name = "coffe/create_category.html"
+
+class CategoryDeleteView(DeleteView):
+    model = Category
+    success_url = reverse_lazy("categories_list")
+
+class CategoryUpdateView(UpdateView, ):
+    model = Category
+    fields = "__all__"
+    success_url = reverse_lazy("categories_list")
+
+
 
 class ItemListView(ListView):
     model = Item

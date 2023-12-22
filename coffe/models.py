@@ -65,15 +65,18 @@ class MyUser(AbstractUser):
     def __str__(self):
         return f'{self.username}'
 
+def get_default_image():
+    return "images/default/default.jpeg"
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
+    image = models.ImageField(verbose_name='CategoryImage', upload_to='images/user_uploads', null=True, blank=True,
+                              default=get_default_image)
+
 
     def __str__(self):
         return f'{self.name}'
 
-def get_default_image():
-    return "images/default/default.jpeg"
 class Item(models.Model):
     category = models.ForeignKey(
         Category, on_delete=models.CASCADE, related_name="items")
